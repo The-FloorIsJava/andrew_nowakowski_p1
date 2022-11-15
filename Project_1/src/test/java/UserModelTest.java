@@ -1,5 +1,3 @@
-package Tests;
-
 import models.Position;
 import models.User;
 import org.junit.Assert;

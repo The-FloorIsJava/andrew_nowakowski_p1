@@ -1,5 +1,6 @@
 package Services;
 
+import models.Auth;
 import models.Position;
 import models.User;
 
@@ -26,4 +27,21 @@ public class UserService {
         users.add(user);
         return true;
     }
+
+    public boolean loginUser(User user) {
+        if (this.users.size() == 0) return false;
+        for (User value : this.users) {
+            if (user.getUsername().equals(value.getUsername())) return user.isValidPassword(value.getPassword());
+        }
+        return false;
+    }
+
+    public boolean registeruser(User user) {
+        if (this.users.size() == 0) return false;
+        for (User value : this.users) {
+            if (user.getUsername().equals(value.getUsername())) return false;
+        }
+        return true;
+    }
 }
+

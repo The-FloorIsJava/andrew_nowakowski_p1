@@ -1,11 +1,34 @@
-create table customer(customer_id int primary key, customer_name varchar(255), balance numeric);
-create table cart_item(cart_item_id int primary key, item_name varchar(255), price numeric, owned_by int, foreign key (owned_by) references customer(customer_id));
-insert into customer values (1, 'tim', 4.50);
-insert into customer values (2, 'joe', 7.50);
-insert into customer values (3, 'kate', 2.50);
-select * from customer;
+--creating the user table
+create table user_table(
+	u_username varChar(255) primary key,
+	u_password varchar(255) not null,
+	u_position varchar(30) default 'Employee'
+);
 
-/* inserting into the cart item table and referencing a customer in the customer table */
-insert into cart_item values (1, 'tv', 49.99, 1);
+--creating the reimbursement ticket table
+create table reimbursement_ticket_table(
+	id serial primary key,
+	username varchar(255),
+	amount numeric,
+	description text,
+	status varchar(30) default 'Pending',
+	r_type varchar(30) default 'Other',
+	foreign key (username) references user_table(u_username)
+);
 
-select * from customer join cart_item on customer.customer_id = cart_item.owned_by;
+--inserting into user table
+insert into user_table(u_username, u_password, u_position) values ('Andrew', 'password', 'Manager');
+insert into user_table(u_username, u_password, u_position) values ('User', 'test', 'Employee');
+
+--inserting into reimbursement ticket table
+insert into reimbursement_ticket_table(id, username, amount, description, status, r_type) values (1, 'Andrew', 65.99, 'Seafood buffet', 'Pending', 'Food');
+insert into reimbursement_ticket_table(id, username, amount, description, status, r_type) values (2, 'User', 99.99, 'Hotel 2 nights', 'Pending', 'Lodging');
+insert into reimbursement_ticket_table(id, username, amount, description, status, r_type) values (3, 'User', 65.99, 'Gas', 'Pending', 'Travel');
+
+--joining the tables to show all the information
+select * from user_table join reimbursement_ticket_table on user_table.u_username = reimbursement_ticket_table.username;
+
+--joining the tables where a specific username
+select * from user_table join reimbursement_ticket_table on user_table.u_username = reimbursement_ticket_table.username where user_table.u_username = 'User';
+
+--TODO add enums / on delete

@@ -28,6 +28,14 @@ public class User {
         this.position = position;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
     public boolean isValidPassword(String password) {
         if (password == null) return false;
         return this.password != null && this.password.equals(password);
@@ -35,5 +43,14 @@ public class User {
 
     public boolean isValid() {
         return (this.username != null) & (this.position != null);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", position=" + position +
+                '}';
     }
 }

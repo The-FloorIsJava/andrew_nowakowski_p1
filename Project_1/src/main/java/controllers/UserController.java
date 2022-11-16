@@ -23,10 +23,24 @@ public class UserController {
         app.get("/", this::helloHandler);
         app.get("users", this::getUserHandler);
         app.post("users", this::postUserHandler);
+        app.post("login", this::postLoginHandler);
+        app.post("register", this::postRegisterHandler);
+    }
+
+    private void postRegisterHandler(Context context) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        User user = mapper.readValue(context.body(), User.class);
+        if (this.userService.registeruser(user)) context.json(user);
+    }
+
+    private void postLoginHandler(Context context) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        User user = mapper.readValue(context.body(), User.class);
+        if (this.userService.loginUser(user)) context.json(user);
     }
 
     private void postUserHandler(Context context) throws JsonProcessingException {
-        ObjectMapper mapper =new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
         User user = mapper.readValue(context.body(), User.class);
         if (userService.addUser(user)) context.json(user);
     }

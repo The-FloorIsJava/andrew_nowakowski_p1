@@ -23,3 +23,6 @@
 hs_err_pid*
 
 src/main/resources/db.properties
+*.iml
+target/
+.idea/

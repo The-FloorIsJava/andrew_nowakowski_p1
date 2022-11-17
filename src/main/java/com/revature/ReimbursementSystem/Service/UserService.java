@@ -1,48 +1,44 @@
 package com.revature.ReimbursementSystem.Service;
 
+import com.revature.ReimbursementSystem.DAO.UserDAO;
 import com.revature.ReimbursementSystem.Model.User;
+import com.revature.ReimbursementSystem.Util.DTO.LoginCredentials;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class UserService {
 
-    List<User> users;
+    private final UserDAO userDAO;
+    private User currentSessionUser = null;
 
-    public UserService() {
-        this.users = new LinkedList<>();
+    public UserService(UserDAO userDAO) {
+        this.userDAO = userDAO;
     }
 
     public List<User> getAllUsers() {
-        return this.users;
+        return null;
     }
 
 
     public boolean addUser(User user) {
-        if (!user.isValidUser()) return false;
-
-        this.users.add(user);
-        return true;
-    }
-
-    public boolean loginUser(User user) {
-        if (!user.isValidUser()) return false;
-
-        for (User value : this.users) {
-            if (user.getUsername().equals(value.getUsername())) return user.isValidPassword(value);
-        }
-
         return false;
     }
 
-    public boolean registerUser(User newUser) {
-        if (!newUser.isValidUser()) return false;
+    public User loginUser(LoginCredentials loginCredentials) {
+        if (this.currentSessionUser != null) return null;
+        this.currentSessionUser = this.userDAO.loginCheck(loginCredentials.getUsername(), loginCredentials.getPassword());
+        return this.currentSessionUser;
+    }
 
-        for (User user : this.users) {
-            if (newUser.getUsername().equals(user.getUsername())) return false;
-        }
+    public User registerUser(User newUser) {
+        return this.userDAO.insert(newUser);
+    }
 
-        this.users.add(newUser);
-        return true;
+    public User getSessionUser() {
+        return this.currentSessionUser;
+    }
+
+    public void logout() {
+        this.currentSessionUser = null;
     }
 }

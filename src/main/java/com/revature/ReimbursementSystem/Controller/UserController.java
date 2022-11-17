@@ -2,17 +2,18 @@ package com.revature.ReimbursementSystem.Controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.revature.ReimbursementSystem.DAO.UserDAO;
 import com.revature.ReimbursementSystem.Model.User;
 import com.revature.ReimbursementSystem.Service.UserService;
+import com.revature.ReimbursementSystem.Util.DTO.LoginCredentials;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
-import java.util.List;
 
 public class UserController {
     UserService userService;
     public UserController() {
-        userService = new UserService();
+        this.userService = new UserService(new UserDAO());
     }
 
     /**
@@ -20,37 +21,34 @@ public class UserController {
      * @param app Javalin app passed to establish endpoint.
      */
     public void startAPI(Javalin app) {
-        app.get("/", this::helloHandler);
-        app.get("users", this::getUserHandler);
-        app.post("users", this::postUserHandler);
         app.post("login", this::postLoginHandler);
         app.post("register", this::postRegisterHandler);
+        app.delete("logout", this::deleteLogoutHandler);
+    }
+
+    private void deleteLogoutHandler(Context context) {
+        User sessionUser = this.userService.getSessionUser();
+        if (sessionUser == null) {
+            context.json("You cannot log out if you are not logged in.");
+            return;
+        }
+
+        String username = sessionUser.getUsername();
+        this.userService.logout();
+        context.json(String.format("%s has logged out successfully.", username));
     }
 
     private void postRegisterHandler(Context context) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         User user = mapper.readValue(context.body(), User.class);
-        if (this.userService.registerUser(user)) context.json(user);
+        if (this.userService.registerUser(user) == null) context.json(String.format("Failed to register %s. Please try a different username.", user.getUsername()));
+        else context.json(String.format("%s has successfully registered. Please log in.", user.getUsername()));
     }
 
     private void postLoginHandler(Context context) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        User user = mapper.readValue(context.body(), User.class);
-        if (this.userService.loginUser(user)) context.json(user);
-    }
-
-    private void postUserHandler(Context context) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        User user = mapper.readValue(context.body(), User.class);
-        if (userService.addUser(user)) context.json(user);
-    }
-
-    private void getUserHandler(Context context) {
-        List<User> users = userService.getAllUsers();
-        context.json(users);
-    }
-
-    public void helloHandler(Context context) {
-        context.result("Hello World!");
+        LoginCredentials loginCredentials = mapper.readValue(context.body(), LoginCredentials.class);
+        if (this.userService.loginUser(loginCredentials) == null) context.json(String.format("%s has failed to login.", loginCredentials.getUsername()));
+        else context.json(String.format("%s has logged in successfully.", loginCredentials.getUsername()));
     }
 }

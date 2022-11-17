@@ -12,6 +12,12 @@ public class User {
         this.position = position;
     }
 
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+        this.position = Position.Employee;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -41,7 +47,7 @@ public class User {
         return this.password != null && this.password.equals(password);
     }
 
-    public boolean isValid() {
+    public boolean isValidUser() {
         return (this.username != null) & (this.position != null);
     }
 

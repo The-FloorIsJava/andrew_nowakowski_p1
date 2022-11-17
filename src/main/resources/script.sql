@@ -1,8 +1,10 @@
+create type pos as enum ('Employee', 'Manager');
+
 --creating the user table
 create table user_table(
 	u_username varChar(255) primary key,
 	u_password varchar(255) not null,
-	u_position varchar(30) default 'Employee'
+	u_position pos default 'Employee'
 );
 
 --creating the reimbursement ticket table

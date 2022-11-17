@@ -30,7 +30,7 @@ public class UserController {
     private void postRegisterHandler(Context context) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         User user = mapper.readValue(context.body(), User.class);
-        if (this.userService.registeruser(user)) context.json(user);
+        if (this.userService.registerUser(user)) context.json(user);
     }
 
     private void postLoginHandler(Context context) throws JsonProcessingException {

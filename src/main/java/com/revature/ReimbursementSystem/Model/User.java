@@ -5,11 +5,8 @@ public class User {
     private String password;
     private Position position;
 
-    public  User() {}
-    public User(String username, String password, Position position) {
-        this.username = username;
-        this.password = password;
-        this.position = position;
+    public  User() {
+        this.position = Position.Employee;
     }
 
     public User(String username, String password) {
@@ -44,11 +41,20 @@ public class User {
 
     public boolean isValidPassword(String password) {
         if (password == null) return false;
+
         return this.password != null && this.password.equals(password);
     }
 
+    public boolean isValidPassword(User user) {
+        if (user == null) return false;
+
+        if (user.getPassword() == null) return false;
+
+        return this.password != null && this.password.equals(user.getPassword());
+    }
+
     public boolean isValidUser() {
-        return (this.username != null) & (this.position != null);
+        return (this.username != null) & (this.password != null);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.revature.ReimbursementSystem.Service;
 
-import com.revature.ReimbursementSystem.Model.Position;
 import com.revature.ReimbursementSystem.Model.User;
 
 import java.util.LinkedList;
@@ -30,7 +29,7 @@ public class UserService {
         if (!user.isValidUser()) return false;
 
         for (User value : this.users) {
-            if (user.getUsername().equals(value.getUsername())) return user.isValidPassword(value.getPassword());
+            if (user.getUsername().equals(value.getUsername())) return user.isValidPassword(value);
         }
 
         return false;

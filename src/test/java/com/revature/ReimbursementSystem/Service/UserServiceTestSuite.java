@@ -5,8 +5,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.LinkedList;
-
 public class UserServiceTestSuite {
 
     private UserService userService;
@@ -44,7 +42,6 @@ public class UserServiceTestSuite {
         User oldUser = new User("test", "456");
 
         userService.addUser(oldUser);
-
         boolean actual = userService.registerUser(newUser);
         User[] expected = {oldUser};
 
@@ -58,7 +55,6 @@ public class UserServiceTestSuite {
         User oldUser = new User("notTest", "5565");
 
         userService.registerUser(oldUser);
-
         boolean actual = userService.registerUser(newUser);
         User[] expected = {oldUser, newUser};
 

@@ -19,7 +19,7 @@ create table user_table(
 
 --creating the reimbursement ticket table
 create table reimbursement_ticket_table(
-	"id" serial primary key,
+	"id" int primary key,
 	"username" varchar(255),
 	"amount" numeric not null,
 	"description" text not null,
@@ -43,3 +43,5 @@ select * from user_table join reimbursement_ticket_table on user_table.username 
 --joining the tables where a specific username
 select * from user_table join reimbursement_ticket_table on user_table.username = reimbursement_ticket_table.username where user_table.username = 'User';
 
+--get the max value from the id column
+select max(id) from reimbursement_ticket_table;

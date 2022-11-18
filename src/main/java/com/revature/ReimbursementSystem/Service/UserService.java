@@ -4,8 +4,6 @@ import com.revature.ReimbursementSystem.DAO.UserDAO;
 import com.revature.ReimbursementSystem.Model.User;
 import com.revature.ReimbursementSystem.Util.DTO.LoginCredentials;
 
-import java.util.List;
-
 public class UserService {
 
     private final UserDAO userDAO;
@@ -13,15 +11,6 @@ public class UserService {
 
     public UserService(UserDAO userDAO) {
         this.userDAO = userDAO;
-    }
-
-    public List<User> getAllUsers() {
-        return null;
-    }
-
-
-    public boolean addUser(User user) {
-        return false;
     }
 
     public User loginUser(LoginCredentials loginCredentials) {

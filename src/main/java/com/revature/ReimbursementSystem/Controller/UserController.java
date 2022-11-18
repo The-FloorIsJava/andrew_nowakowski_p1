@@ -2,7 +2,6 @@ package com.revature.ReimbursementSystem.Controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.revature.ReimbursementSystem.DAO.UserDAO;
 import com.revature.ReimbursementSystem.Model.User;
 import com.revature.ReimbursementSystem.Service.UserService;
 import com.revature.ReimbursementSystem.Util.DTO.LoginCredentials;
@@ -11,9 +10,9 @@ import io.javalin.http.Context;
 
 
 public class UserController {
-    UserService userService;
-    public UserController() {
-        this.userService = new UserService(new UserDAO());
+    private final UserService userService;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     /**

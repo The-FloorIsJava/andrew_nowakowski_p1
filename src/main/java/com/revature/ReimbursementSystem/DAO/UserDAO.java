@@ -26,8 +26,6 @@ public class UserDAO implements Crudable<User, String> {
 
             if (preparedStatement.executeUpdate() == 0) throw new SQLException("User was not created.");
 
-            System.out.println(preparedStatement.getMetaData());
-
             return newUser;
 
         } catch (SQLException e) {

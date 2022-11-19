@@ -1,6 +1,7 @@
 package com.revature.ReimbursementSystem.Service;
 
 import com.revature.ReimbursementSystem.DAO.UserDAO;
+import com.revature.ReimbursementSystem.Model.Position;
 import com.revature.ReimbursementSystem.Model.User;
 import com.revature.ReimbursementSystem.Util.DTO.LoginCredentials;
 
@@ -29,5 +30,9 @@ public class UserService {
 
     public void logout() {
         this.currentSessionUser = null;
+    }
+
+    public boolean isAManager() {
+        return (this.currentSessionUser == null) || (this.currentSessionUser.getPosition() != Position.Manager);
     }
 }

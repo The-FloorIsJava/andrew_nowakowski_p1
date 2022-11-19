@@ -3,6 +3,9 @@ package com.revature.ReimbursementSystem.Service;
 import com.revature.ReimbursementSystem.DAO.ReimbursementTicketDAO;
 import com.revature.ReimbursementSystem.Model.ReimbursementTicket;
 import com.revature.ReimbursementSystem.Model.User;
+import com.revature.ReimbursementSystem.Util.DTO.ReimbursementTicketAction;
+
+import java.util.List;
 
 public class ReimbursementTicketService {
 
@@ -24,5 +27,13 @@ public class ReimbursementTicketService {
         this.ticketCount = this.reimbursementTicketDAO.getRowCount();
         this.ticketCount++;
         System.out.println(this.ticketCount);
+    }
+
+    public List<ReimbursementTicket> getPendingTickets() {
+        return this.reimbursementTicketDAO.getPendingTickets();
+    }
+
+    public ReimbursementTicketAction processTicketAction(ReimbursementTicketAction action) {
+        return this.reimbursementTicketDAO.updateTicket(action);
     }
 }

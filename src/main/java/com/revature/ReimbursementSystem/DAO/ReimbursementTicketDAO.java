@@ -1,10 +1,12 @@
 package com.revature.ReimbursementSystem.DAO;
 
-import com.revature.ReimbursementSystem.Model.ReimbursementTicket;
+import com.revature.ReimbursementSystem.Model.*;
 import com.revature.ReimbursementSystem.Util.ConnectionFactory;
+import com.revature.ReimbursementSystem.Util.DTO.ReimbursementTicketAction;
 import com.revature.ReimbursementSystem.Util.Interface.Crudable;
 
 import java.sql.*;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ReimbursementTicketDAO implements Crudable<ReimbursementTicket, Integer> {
@@ -12,7 +14,11 @@ public class ReimbursementTicketDAO implements Crudable<ReimbursementTicket, Int
     public ReimbursementTicket insert(ReimbursementTicket newTicket) {
         try (Connection connection = ConnectionFactory.getConnectionFactory().getConnection()) {
 
-            String sql = "insert into reimbursement_ticket_table(\"id\", \"username\", \"amount\", \"description\",\"reimbursement_type\") values (?, ?, ?, ?, ?::reimbursement_type)";
+            String sql = """
+            insert into reimbursement_ticket_table("id", "username", "amount",
+             "description","reimbursement_type")
+             values (?, ?, ?, ?, ?::reimbursement_type)
+             """;
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, newTicket.getId());
@@ -67,6 +73,72 @@ public class ReimbursementTicketDAO implements Crudable<ReimbursementTicket, Int
         } catch (SQLException e) {
             e.printStackTrace();
             return 0;
+        }
+    }
+
+    public List<ReimbursementTicket> getPendingTickets() {
+        try(Connection connection = ConnectionFactory.getConnectionFactory().getConnection()){
+            List<ReimbursementTicket> pendingTickets = new LinkedList<>();
+
+            String sql = """
+                    select * from reimbursement_ticket_table join user_table
+                     on user_table.username = reimbursement_ticket_table.username
+                     where reimbursement_ticket_table.status = 'Pending'
+                     order by reimbursement_ticket_table.id
+                    """;
+
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while(resultSet.next()){
+                pendingTickets.add(convertSqlInfoToReimbursementTicket(resultSet));
+            }
+
+            return pendingTickets;
+
+        } catch (SQLException e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private ReimbursementTicket convertSqlInfoToReimbursementTicket(ResultSet resultSet) throws SQLException {
+        ReimbursementTicket ticket = new ReimbursementTicket();
+        User user = new User();
+
+        user.setUsername(resultSet.getString("username"));
+        user.setPassword(resultSet.getString("password"));
+        user.setPosition(Position.valueOf(resultSet.getString("position")));
+
+        ticket.setId(resultSet.getInt("id"));
+        ticket.setUser(user);
+        ticket.setAmount(resultSet.getDouble("amount"));
+        ticket.setDescription(resultSet.getString("description"));
+        ticket.setStatus(TicketStatus.valueOf(resultSet.getString("status")));
+        ticket.setType(ReimbursementType.valueOf(resultSet.getString("reimbursement_type")));
+
+        return ticket;
+    }
+
+    public ReimbursementTicketAction updateTicket(ReimbursementTicketAction action) {
+        try (Connection connection = ConnectionFactory.getConnectionFactory().getConnection()) {
+
+            String sql = """
+                    update reimbursement_ticket_table set
+                     status = ?::status where id = ? and status = 'Pending'::status
+                    """;
+
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, action.getAction().toString());
+            preparedStatement.setInt(2, action.getTicketId());
+
+            if (preparedStatement.executeUpdate() == 0) throw new SQLException("Ticket was not updated.");
+
+            return action;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

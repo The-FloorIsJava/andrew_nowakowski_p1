@@ -29,12 +29,12 @@ create table reimbursement_ticket_table(
 );
 
 --inserting into user table
-insert into user_table("username", "password", "position") values ('Andrew', 'password', 'Manager');
-insert into user_table("username", "password", "position") values ('User', 'test', 'Employee');
+insert into user_table("username", "password", "position") values ('Andrew', 'password', 'Manager::role');
+insert into user_table("username", "password", "position") values ('User', 'test', 'Employee::role');
 
 --inserting into reimbursement ticket table
-insert into reimbursement_ticket_table("id", "username", "amount", "description", "status", "reimbursement_type") values (1, 'Andrew', 65.99, 'Seafood buffet', 'Pending', 'Food');
-insert into reimbursement_ticket_table("id", "username", "amount", "description", "status", "reimbursement_type") values (2, 'User', 99.99, 'Hotel 2 nights', 'Pending', 'Lodging');
+insert into reimbursement_ticket_table("id", "username", "amount", "description", "status", "reimbursement_type") values (1, 'Andrew', 65.99, 'Seafood buffet', 'Pending'::status, 'Food'::reimbursement_type);
+insert into reimbursement_ticket_table("id", "username", "amount", "description", "status", "reimbursement_type") values (2, 'User', 99.99, 'Hotel 2 nights', 'Pending'::status, 'Lodging'::reimbursement_type);
 insert into reimbursement_ticket_table("id", "username", "amount", "description", "status", "reimbursement_type") values (3, 'User', 65.99, 'Gas', 'Pending', 'Travel');
 
 --joining the tables to show all the information

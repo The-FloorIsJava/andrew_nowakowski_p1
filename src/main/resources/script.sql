@@ -7,6 +7,7 @@ create type status as enum('Pending', 'Approved', 'Denied');
 --enum of the reimbursement category
 create type reimbursement_type as enum('Travel', 'Lodging', 'Food', 'Other');
 
+--drop tables if they exists(TESTING ONLY)
 drop table if exists reimbursement_ticket_table;
 drop table if exists user_table;
 
@@ -45,3 +46,9 @@ select * from user_table join reimbursement_ticket_table on user_table.username 
 
 --get the max value from the id column
 select max(id) from reimbursement_ticket_table;
+
+--getting all pending reimbursement tickets along with the associated users
+select * from reimbursement_ticket_table join user_table on user_table.username = reimbursement_ticket_table.username where reimbursement_ticket_table.status = 'Pending' order by reimbursement_ticket_table.id;
+
+--set the status of a specific ticket if the ticket is not already processed
+update reimbursement_ticket_table set status = 'Approved'::status where id = 3 and status = 'Pending'::status;

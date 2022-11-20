@@ -36,4 +36,8 @@ public class ReimbursementTicketService {
     public ReimbursementTicketAction processTicketAction(ReimbursementTicketAction action) {
         return this.reimbursementTicketDAO.updateTicket(action);
     }
+
+    public List<ReimbursementTicket> getPreviousTicketsForUser(User user) {
+        return this.reimbursementTicketDAO.getPreviousTicketsForUser(user);
+    }
 }

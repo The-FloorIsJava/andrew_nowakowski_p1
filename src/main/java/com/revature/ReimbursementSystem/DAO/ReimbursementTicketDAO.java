@@ -91,7 +91,7 @@ public class ReimbursementTicketDAO implements Crudable<ReimbursementTicket, Int
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while(resultSet.next()){
-                pendingTickets.add(convertSqlInfoToReimbursementTicket(resultSet));
+                pendingTickets.add(convertSqlInfoToReimbursementTicket(resultSet, null));
             }
 
             return pendingTickets;
@@ -102,13 +102,17 @@ public class ReimbursementTicketDAO implements Crudable<ReimbursementTicket, Int
         }
     }
 
-    private ReimbursementTicket convertSqlInfoToReimbursementTicket(ResultSet resultSet) throws SQLException {
+    private ReimbursementTicket convertSqlInfoToReimbursementTicket(ResultSet resultSet, User user) throws SQLException {
         ReimbursementTicket ticket = new ReimbursementTicket();
-        User user = new User();
 
-        user.setUsername(resultSet.getString("username"));
-        user.setPassword(resultSet.getString("password"));
-        user.setPosition(Position.valueOf(resultSet.getString("position")));
+        if (user == null) {
+            user = new User();
+
+            user.setUsername(resultSet.getString("username"));
+            user.setPassword(resultSet.getString("password"));
+            user.setPosition(Position.valueOf(resultSet.getString("position")));
+        }
+
 
         ticket.setId(resultSet.getInt("id"));
         ticket.setUser(user);
@@ -137,6 +141,32 @@ public class ReimbursementTicketDAO implements Crudable<ReimbursementTicket, Int
             return action;
 
         } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<ReimbursementTicket> getPreviousTicketsForUser(User user) {
+        try(Connection connection = ConnectionFactory.getConnectionFactory().getConnection()){
+            List<ReimbursementTicket> userTickets = new LinkedList<>();
+
+            String sql = """
+                    select * from reimbursement_ticket_table
+                     where username = ?
+                     order by reimbursement_ticket_table.id
+                    """;
+
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, user.getUsername());
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while(resultSet.next()){
+                userTickets.add(convertSqlInfoToReimbursementTicket(resultSet, user));
+            }
+
+            return userTickets;
+
+        } catch (SQLException e){
             e.printStackTrace();
             return null;
         }

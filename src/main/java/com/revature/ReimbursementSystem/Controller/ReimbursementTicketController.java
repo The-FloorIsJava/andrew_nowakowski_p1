@@ -26,6 +26,24 @@ public class ReimbursementTicketController {
         app.post("ticket/submit", this::postSubmitTicketHandler);
         app.get("ticket/pending/all", this::getAllPendingTicketsHandler);
         app.post("ticket/pending/process", this::postProcessTicketHandler);
+        app.get("ticket/history", this::getAllPreviousTicketsForUser);
+    }
+
+    private void getAllPreviousTicketsForUser(Context context) {
+        User user = this.userService.getSessionUser();
+        if (user == null) {
+            context.json("You must be logged in to view ticket history.");
+            return;
+        }
+
+        List<ReimbursementTicket> tickets = this.reimbursementTicketService.getPreviousTicketsForUser(user);
+
+        if (tickets == null) {
+            context.json("No previous tickets.");
+            return;
+        }
+
+        context.json(tickets);
     }
 
     private void postProcessTicketHandler(Context context) throws JsonProcessingException {

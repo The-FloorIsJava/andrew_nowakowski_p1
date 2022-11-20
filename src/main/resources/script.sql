@@ -52,3 +52,6 @@ select * from reimbursement_ticket_table join user_table on user_table.username 
 
 --set the status of a specific ticket if the ticket is not already processed
 update reimbursement_ticket_table set status = 'Approved'::status where id = 3 and status = 'Pending'::status;
+
+--get the previous tickets for a given user
+select * from reimbursement_ticket_table where username = 'Andrew' order by reimbursement_ticket_table.id;

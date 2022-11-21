@@ -171,4 +171,31 @@ public class ReimbursementTicketDAO implements Crudable<ReimbursementTicket, Int
             return null;
         }
     }
+
+    public List<ReimbursementTicket> getTypeOfTicketsForUser(User user, ReimbursementType type) {
+        try(Connection connection = ConnectionFactory.getConnectionFactory().getConnection()){
+            List<ReimbursementTicket> userTickets = new LinkedList<>();
+
+            String sql = """
+                    select * from reimbursement_ticket_table
+                     where username = ? and reimbursement_type = ?::reimbursement_type
+                     order by reimbursement_ticket_table.id
+                    """;
+
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, user.getUsername());
+            preparedStatement.setString(2, type.toString());
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while(resultSet.next()){
+                userTickets.add(convertSqlInfoToReimbursementTicket(resultSet, user));
+            }
+
+            return userTickets;
+
+        } catch (SQLException e){
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

@@ -2,6 +2,7 @@ package com.revature.ReimbursementSystem.Service;
 
 import com.revature.ReimbursementSystem.DAO.ReimbursementTicketDAO;
 import com.revature.ReimbursementSystem.Model.ReimbursementTicket;
+import com.revature.ReimbursementSystem.Model.ReimbursementType;
 import com.revature.ReimbursementSystem.Model.User;
 import com.revature.ReimbursementSystem.Util.DTO.ReimbursementTicketAction;
 
@@ -39,5 +40,9 @@ public class ReimbursementTicketService {
 
     public List<ReimbursementTicket> getPreviousTicketsForUser(User user) {
         return this.reimbursementTicketDAO.getPreviousTicketsForUser(user);
+    }
+
+    public List<ReimbursementTicket> getTypeOfTicketsForUser(User user, ReimbursementType type) {
+        return this.reimbursementTicketDAO.getTypeOfTicketsForUser(user, type);
     }
 }

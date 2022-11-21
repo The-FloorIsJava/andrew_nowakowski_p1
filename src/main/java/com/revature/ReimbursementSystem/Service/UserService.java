@@ -32,7 +32,8 @@ public class UserService {
         this.currentSessionUser = null;
     }
 
-    public boolean isAManager() {
-        return (this.currentSessionUser == null) || (this.currentSessionUser.getPosition() != Position.Manager);
+    public boolean isNotAManager() {
+        if (this.currentSessionUser == null) return true;
+        return this.currentSessionUser.getPosition() != Position.Manager;
     }
 }

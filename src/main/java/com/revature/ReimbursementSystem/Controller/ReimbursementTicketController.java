@@ -3,6 +3,7 @@ package com.revature.ReimbursementSystem.Controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.ReimbursementSystem.Model.ReimbursementTicket;
+import com.revature.ReimbursementSystem.Model.ReimbursementType;
 import com.revature.ReimbursementSystem.Model.User;
 import com.revature.ReimbursementSystem.Service.ReimbursementTicketService;
 import com.revature.ReimbursementSystem.Service.UserService;
@@ -27,6 +28,26 @@ public class ReimbursementTicketController {
         app.get("ticket/pending/all", this::getAllPendingTicketsHandler);
         app.post("ticket/pending/process", this::postProcessTicketHandler);
         app.get("ticket/history", this::getAllPreviousTicketsForUser);
+        app.get("ticket/history/{type}", this::getTypeOfTicketsForUser);
+    }
+
+    private void getTypeOfTicketsForUser(Context context) {
+        User user = this.userService.getSessionUser();
+        if (user == null) {
+            context.json("You must be logged in to view ticket history.");
+            return;
+        }
+
+        ReimbursementType type = ReimbursementType.valueOf(context.pathParam("type"));
+
+        List<ReimbursementTicket> tickets = this.reimbursementTicketService.getTypeOfTicketsForUser(user, type);
+
+        if (tickets == null) {
+            context.json("No previous tickets.");
+            return;
+        }
+
+        context.json(tickets);
     }
 
     private void getAllPreviousTicketsForUser(Context context) {
@@ -47,7 +68,7 @@ public class ReimbursementTicketController {
     }
 
     private void postProcessTicketHandler(Context context) throws JsonProcessingException {
-        if (this.userService.isAManager()) {
+        if (this.userService.isNotAManager()) {
             context.json("You are not authorized to view this page.");
             return;
         }
@@ -59,7 +80,7 @@ public class ReimbursementTicketController {
     }
 
     private void getAllPendingTicketsHandler(Context context) {
-        if (this.userService.isAManager()) {
+        if (this.userService.isNotAManager()) {
             context.json("You are not authorized to view this page.");
             return;
         }

@@ -3,6 +3,7 @@ package com.revature.ReimbursementSystem.DAO;
 import com.revature.ReimbursementSystem.Model.Position;
 import com.revature.ReimbursementSystem.Model.User;
 import com.revature.ReimbursementSystem.Util.ConnectionFactory;
+import com.revature.ReimbursementSystem.Util.DTO.RoleChange;
 import com.revature.ReimbursementSystem.Util.Exception.InvalidUserInputException;
 import com.revature.ReimbursementSystem.Util.Interface.Crudable;
 
@@ -73,6 +74,25 @@ public class UserDAO implements Crudable<User, String> {
             user.setPosition(Position.valueOf(resultSet.getString("position")));
 
             return user;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public RoleChange updateRole(RoleChange action) {
+        try (Connection connection = ConnectionFactory.getConnectionFactory().getConnection()) {
+            String sql = "update user_table set position = ?::role where username = ? and position <> ?::role";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            preparedStatement.setString(1, action.getRole().toString());
+            preparedStatement.setString(2, action.getUsername());
+            preparedStatement.setString(3, action.getRole().toString());
+
+            if (preparedStatement.executeUpdate() == 0) throw new SQLException("Role was not changed.");
+
+            return action;
 
         } catch (SQLException e) {
             e.printStackTrace();

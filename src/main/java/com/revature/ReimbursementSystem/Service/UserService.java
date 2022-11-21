@@ -4,6 +4,7 @@ import com.revature.ReimbursementSystem.DAO.UserDAO;
 import com.revature.ReimbursementSystem.Model.Position;
 import com.revature.ReimbursementSystem.Model.User;
 import com.revature.ReimbursementSystem.Util.DTO.LoginCredentials;
+import com.revature.ReimbursementSystem.Util.DTO.RoleChange;
 
 public class UserService {
 
@@ -35,5 +36,14 @@ public class UserService {
     public boolean isNotAManager() {
         if (this.currentSessionUser == null) return true;
         return this.currentSessionUser.getPosition() != Position.Manager;
+    }
+
+    public boolean isNotAnAdmin() {
+        if (this.currentSessionUser == null) return true;
+        return this.currentSessionUser.getPosition() != Position.Admin;
+    }
+
+    public RoleChange changeRole(RoleChange action) {
+        return this.userDAO.updateRole(action);
     }
 }

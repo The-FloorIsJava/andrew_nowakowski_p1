@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.ReimbursementSystem.Model.User;
 import com.revature.ReimbursementSystem.Service.UserService;
 import com.revature.ReimbursementSystem.Util.DTO.LoginCredentials;
+import com.revature.ReimbursementSystem.Util.DTO.RoleChange;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -23,6 +24,20 @@ public class UserController {
         app.post("login", this::postLoginHandler);
         app.post("register", this::postRegisterHandler);
         app.delete("logout", this::deleteLogoutHandler);
+        app.post("change_roles", this::postChangeRolesHandler);
+    }
+
+    private void postChangeRolesHandler(Context context) throws JsonProcessingException {
+        if (this.userService.isNotAnAdmin()) {
+            context.json("You are not authorized to view this page.");
+            return;
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        RoleChange action = mapper.readValue(context.body(), RoleChange.class);
+        if (this.userService.changeRole(action) == null) context.json("Failed to change role.");
+        else context.json(String.format("user %s has successfully changed their role to %s", action.getUsername(), action.getRole().toString()));
+
     }
 
     private void deleteLogoutHandler(Context context) {

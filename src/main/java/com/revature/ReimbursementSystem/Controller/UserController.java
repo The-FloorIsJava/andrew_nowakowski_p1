@@ -55,6 +55,12 @@ public class UserController {
     private void postRegisterHandler(Context context) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         User user = mapper.readValue(context.body(), User.class);
+
+        if (!user.isValidUser()) {
+            context.json("Invalid input.");
+            return;
+        }
+
         if (this.userService.registerUser(user) == null) context.json(String.format("Failed to register %s. Please try a different username.", user.getUsername()));
         else context.json(String.format("%s has successfully registered. Please log in.", user.getUsername()));
     }
